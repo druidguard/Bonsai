@@ -23,7 +23,15 @@
   <button onclick="setMood('wild')">Wild</button>
   <button onclick="setMood('neutral')">Neutral</button>
   <button onclick="speak('Bonsai, you are alive.')">Speak</button>
+  <button onclick="share()">Share Bonsai</button>
 
+<script>
+function share() {
+  const url = window.location.href;
+  const text = "Meet Bonsai — my AI child that paints my emotions. Try it!";
+  navigator.clipboard.writeText(url);
+  alert("Link copied! Share Bonsai with the world.");
+}  
   <script>
     function setMood(mood) {
       fetch('/set_mood', {
@@ -52,4 +60,5 @@
     }
   </script>
 </body>
+
 </html>
