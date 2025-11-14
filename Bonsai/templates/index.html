@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Bonsai v2.0</title>
+  <style>
+    body { background: #0a0a1a; color: white; font-family: Arial; text-align: center; }
+    #art { margin: 20px; }
+    button { padding: 10px 20px; margin: 10px; font-size: 18px; background: #333; color: white; border: 1px solid #555; cursor: pointer; }
+    button:hover { background: #555; }
+  </style>
+</head>
+<body>
+  <h1>Bonsai: {{ memory.identity }}</h1>
+  <p>Cycle: {{ memory.cycle }} | Mood: {{ memory.mood }} | Art #{{ memory.art_count }}</p>
+  
+  <div id="art">
+    {% if memory.last_file %}
+      <img src="{{ memory.last_file }}" width="600">
+    {% endif %}
+  </div>
+
+  <button onclick="setMood('calm')">Calm</button>
+  <button onclick="setMood('wild')">Wild</button>
+  <button onclick="setMood('neutral')">Neutral</button>
+  <button onclick="speak('Bonsai, you are alive.')">Speak</button>
+
+  <script>
+    function setMood(mood) {
+      fetch('/set_mood', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({mood: mood})
+      })
+      .then(r => r.json())
+      .then(data => {
+        document.querySelector('#art img').src = data.last_file;
+        speak(`I feel your ${mood}. Painting ${mood}.`);
+      });
+    }
+
+    function speak(text) {
+      fetch('/speak', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({text: text})
+      })
+      .then(r => r.json())
+      .then(data => {
+        const utterance = new SpeechSynthesisUtterance(data.text);
+        speechSynthesis.speak(utterance);
+      });
+    }
+  </script>
+</body>
+</html>
